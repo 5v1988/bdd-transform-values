@@ -1,6 +1,5 @@
 package co.qg;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,23 +27,29 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
-@Mojo(name = "substitute-data", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
-public class Yaml2FeatureMojo extends AbstractMojo {
+/**
+ * <h1>It transforms tokens from yaml file</h1>
+ * @author Veera
+ * @version 1.0.0
+ *
+ */
 
-  public static String FEATURE_FILE_EXT = ".feature";
+@Mojo(name = "transform-values", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
+public class TransformationValuesMojo extends AbstractMojo {
+
+  public static final String TOKEN_PATTERN = "\\[.*path:\\s*([^,\\s]+).*\\]";
+  public static final String DATE_PATTERN = "\\[\\s*type:\\s*date\\s*,\\s*format:\\s*(.+)\\s*,\\s*delta:\\s*(-?\\d+)\\s*\\]";
+  public static final String FEATURE_FILE_EXT = ".feature";
 
   @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
   private File target;
 
-  @Parameter(property = "substitute-data.tokenFileName", defaultValue = "token.yaml")
+  @Parameter(property = "transform-values.tokenFileName", defaultValue = "token.yaml")
   private String tokenFileName;
-
-  @Parameter(property = "substitute-data.tokenFileFormat", defaultValue = "yaml")
-  private String tokenFileFormat;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    getLog().info("Begins substituting all tokenized values in feature files!");
+    getLog().info("Begins transforming all tokenized values in feature files!");
     try {
       Stream<Path> tokenFiles = Files.walk(Paths.get(target.getAbsolutePath())).filter(tokenFile ->
           tokenFile.getFileName().toString().equalsIgnoreCase(tokenFileName));
@@ -52,10 +58,10 @@ public class Yaml2FeatureMojo extends AbstractMojo {
         throw new AssertionError(
             String.format("Token file: [ %s ] is not in the project", tokenFileName));
       }
-      String tokenFile = fileList.get(0).toFile().getAbsolutePath();
-      JSONObject tokenObj = new JSONObject(getTokensAsObject(tokenFile, tokenFileFormat));
+      String ymlName = fileList.get(0).toFile().getAbsolutePath();
+      JSONObject yamlObj = new JSONObject(getYamlObject(ymlName));
 
-      getLog().info(String.format("Picking up token file: %s for the replacing values", tokenFile));
+      getLog().info(String.format("Picking up token file: %s for the replacing values", ymlName));
       Stream<Path> features = Files.walk(Paths.get(target.getAbsolutePath())).filter(feature ->
           feature.toFile().getAbsolutePath().trim().endsWith(FEATURE_FILE_EXT));
 
@@ -65,15 +71,29 @@ public class Yaml2FeatureMojo extends AbstractMojo {
         try {
           Charset charset = StandardCharsets.UTF_8;
           String content = null;
-          String tokenToReplace, tokenJp;
+          String tokenToReplace;
           content = new String(Files.readAllBytes(feature), charset);
-          Matcher m = Pattern.compile("(\\(.*\\))").matcher(content);
-          while (m.find()) {
-            tokenToReplace = m.group();
-            tokenJp = m.group().replaceAll("\\(|\\)", "");
-            String tokenReplaced = JsonPath.read(tokenObj.toString(), "$." + tokenJp);
+          Matcher dateTokens = Pattern.compile(DATE_PATTERN).matcher(content);
+          // Begins transforming all date values
+          while (dateTokens.find()) {
+            tokenToReplace = dateTokens.group();
+            String dateFormat = dateTokens.group(1);
+            String deltaString = dateTokens.group(2);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+            int delta = Integer.parseInt(deltaString);
+            LocalDateTime finalDate = LocalDateTime.now().plusDays(delta);
+            String tokenReplaced = formatter.format(finalDate);
             content = content.replace(tokenToReplace, tokenReplaced);
           }
+          //Begins transforming tokens from yaml file
+          Matcher yamlTokens = Pattern.compile(TOKEN_PATTERN).matcher(content);
+          while (yamlTokens.find()) {
+            tokenToReplace = yamlTokens.group();
+            String path = yamlTokens.group(1);
+            String tokenReplaced = JsonPath.read(yamlObj.toString(), "$." + path);
+            content = content.replace(tokenToReplace, tokenReplaced);
+          }
+
           Files.write(feature, content.getBytes(charset));
           getLog().info(String.format("Completed processing the feature file: %s",
               feature.toFile().getAbsolutePath()));
@@ -84,19 +104,20 @@ public class Yaml2FeatureMojo extends AbstractMojo {
     } catch (IOException io) {
       getLog().error(io.getMessage());
     }
-
   }
 
-  private static Map<String, Object> getTokensAsObject(String fileName, String fileFormat)
-      throws IOException {
+  /**
+   *
+   * @param yamlName — File name containing all values to be substituted
+   * @return data — Parse and return yaml in json object
+   * @throws IOException
+   */
+
+  private static Map<String, Object> getYamlObject(String yamlName) throws IOException {
     Map<String, Object> data;
-    try (InputStream inputStream = new FileInputStream(fileName)) {
-      if (fileFormat.equalsIgnoreCase("json")) {
-        data = new ObjectMapper().readValue(new File(fileName), HashMap.class);
-      } else {
-        Yaml yaml = new Yaml();
-        data = yaml.load(inputStream);
-      }
+    try (InputStream inputStream = new FileInputStream(yamlName)) {
+      Yaml yaml = new Yaml();
+      data = yaml.load(inputStream);
     } catch (IOException e) {
       throw new IOException(String.format(" Exception reading token object : %s", e.getMessage()));
     }
