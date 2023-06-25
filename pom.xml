@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.5v1988</groupId>
   <artifactId>bdd-transform-values-maven-plugin</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>Feature file token transformer</name>
   <description>This plugin replaces all defined tokens in features files</description>
