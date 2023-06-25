@@ -28,7 +28,7 @@ import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * <h1>It transforms tokens from yaml file</h1>
+ * It transforms tokens from yaml file
  * @author Veera
  * @version 1.0.0
  *
@@ -36,9 +36,11 @@ import org.yaml.snakeyaml.Yaml;
 
 @Mojo(name = "transform-values", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class TransformationValuesMojo extends AbstractMojo {
-
+  //Pattern for the tokens
   public static final String TOKEN_PATTERN = "\\[.*path:\\s*([^,\\s]+).*\\]";
+  //Pattern for the date generators
   public static final String DATE_PATTERN = "\\[\\s*type:\\s*date\\s*,\\s*format:\\s*(.+)\\s*,\\s*delta:\\s*(-?\\d+)\\s*\\]";
+  //Feature file extension
   public static final String FEATURE_FILE_EXT = ".feature";
 
   @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
