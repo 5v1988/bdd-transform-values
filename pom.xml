@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.5v1988</groupId>
-  <artifactId>yaml2feature-maven-plugin</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <artifactId>bdd-transform-values-maven-plugin</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-  <name>Substitute values in feature files from Yaml</name>
+  <name>Feature file token transformer</name>
   <description>This plugin replaces all defined tokens in features files</description>
   <url>https://github.com/5v1988/yaml2feature</url>
   <licenses>
@@ -27,9 +29,10 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git://github.com/5v1988/yaml2feature.git</connection>
-    <developerConnection>scm:git:git@github.com:5v1988/yaml2feature.git</developerConnection>
-    <url>https://github.com/5v1988/yaml2feature</url>
+    <connection>scm:git:git://github.com/5v1988/bdd-transform-values.git</connection>
+    <developerConnection>scm:git:git@github.com:5v1988/bdd-transform-values.git
+    </developerConnection>
+    <url>https://github.com/5v1988/bdd-transform-values</url>
     <tag>HEAD</tag>
   </scm>
   <properties>
@@ -66,11 +69,6 @@
       <artifactId>json-path</artifactId>
       <version>2.7.0</version>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.14.2</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -93,7 +91,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
@@ -115,7 +112,6 @@
             </dependency>
           </dependencies>
         </plugin>
-
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -127,7 +123,6 @@
             <autoReleaseAfterClose>true</autoReleaseAfterClose>
           </configuration>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
@@ -141,7 +136,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -158,7 +152,6 @@
             </execution>
           </executions>
         </plugin>
-
       </plugins>
     </pluginManagement>
   </build>
