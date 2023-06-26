@@ -28,7 +28,7 @@ Add this block to pom.xml
       <plugin>
         <groupId>io.github.5v1988</groupId>
         <artifactId>bdd-transform-values-maven-plugin</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <executions>
           <execution>
             <goals>
