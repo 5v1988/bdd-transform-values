@@ -37,9 +37,9 @@ import org.yaml.snakeyaml.Yaml;
 @Mojo(name = "transform-values", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES)
 public class TransformationValuesMojo extends AbstractMojo {
   //Pattern for the tokens
-  public static final String TOKEN_PATTERN = "\\[.*path:\\s*([^,\\s]+).*\\]";
+  public static final String TOKEN_PATTERN = "\\[\\s*type:\\s*token\\s*,\\s*path:\\s*([^,\\s]+)\\s*]";
   //Pattern for the date generators
-  public static final String DATE_PATTERN = "\\[\\s*type:\\s*date\\s*,\\s*format:\\s*(.+)\\s*,\\s*delta:\\s*(-?\\d+)\\s*\\]";
+  public static final String DATE_PATTERN = "\\[\\s*type:\\s*date\\s*,\\s*format:\\s*(.+)\\s*,\\s*delta:\\s*(-?\\d+)\\s*]";
   //Feature file extension
   public static final String FEATURE_FILE_EXT = ".feature";
 
@@ -85,6 +85,7 @@ public class TransformationValuesMojo extends AbstractMojo {
             int delta = Integer.parseInt(deltaString);
             LocalDateTime finalDate = LocalDateTime.now().plusDays(delta);
             String tokenReplaced = formatter.format(finalDate);
+            getLog().info(String.format("Replacing date token: %s with %s", tokenToReplace, tokenReplaced));
             content = content.replace(tokenToReplace, tokenReplaced);
           }
           //Begins transforming tokens from yaml file
@@ -93,6 +94,7 @@ public class TransformationValuesMojo extends AbstractMojo {
             tokenToReplace = yamlTokens.group();
             String path = yamlTokens.group(1);
             String tokenReplaced = JsonPath.read(yamlObj.toString(), "$." + path);
+            getLog().info(String.format("Replacing yml token: %s with %s", tokenToReplace, tokenReplaced));
             content = content.replace(tokenToReplace, tokenReplaced);
           }
 
