@@ -79,7 +79,8 @@ Feature: Login feature
       | UserName                             | Password                                | Name                                |
       | [ type: token, path: account.email ] | [ type: token, path: account.password ] | [ type: token, path: account.name ] |
 ```
-###Explanation:
+
+##Explanation:
 
 `[ type: token, path: account.email ]` => In this template, Jsonpath `account.name` gets 
 value `Tommy` from the yaml file
@@ -88,7 +89,7 @@ value `Tommy` from the yaml file
 
 `[ type: date, format: dd-MM-yyyy, delta: 1 ]` => Tomorrow's date in format: dd-MM-yyyy
 
-###In Progress:
+##In Progress:
 
 `[ type: random, format: first-name ]` => This template returns randomly generated mobile
 number. other formats could be last-name, full-name, mobile-number, address-line-1 etc. 
