@@ -5,6 +5,12 @@ This library when run as a maven plugin will transform values on feature files i
 automation, and in some cases, this helps to substitute values, mostly for the commonly used data from yaml
 files.
 
+## Objective
+
+— no hard-coded test data in feature files within automation projects
+
+— auto-generate date values (past or future) to stay relevant before test runs
+
 ## Requirement
 
 [Maven](https://maven.apache.org/)
@@ -45,11 +51,13 @@ Optionally, the file with a different name can also be passed as follows:
         ...
     </plugin>
 
-After adding this on pom.xml, along surefire-plugin, `mvn test` either substitutes values from 
+After adding this on `pom.xml`, along surefire-plugin, `mvn test` either substitutes values from 
 yaml file by matching the path or auto-generate like in case of date values. Please also note that
 it doesn't modify the original feature files, but the ones in build directory: `target`
 
-## Examples:
+## Examples
+
+`token.yaml`
 
 ```yaml
 test-config:
@@ -80,21 +88,23 @@ Feature: Login feature
       | [ type: token, path: account.email ] | [ type: token, path: account.password ] | [ type: token, path: account.name ] |
 ```
 
-##Explanation:
+## Explanation
 
 `[ type: token, path: account.email ]` => In this template, Jsonpath `account.name` gets 
 value `Tommy` from the yaml file
 
-`[ type: date, format: MM/dd/yyyy, delta: -1 ]` => Yesterday's date in format: MM/dd/yyyy
+`[ type: date, format: MM/dd/yyyy, delta: -1 ]` => Yesterday's date in `MM/dd/yyyy` format
 
-`[ type: date, format: dd-MM-yyyy, delta: 1 ]` => Tomorrow's date in format: dd-MM-yyyy
+`[ type: date, format: dd-MM-yyyy, delta: 1 ]` => Tomorrow's date in `dd-MM-yyyy` format
 
-##In Progress:
+## To-Do
 
-`[ type: random, format: first-name ]` => This template returns randomly generated mobile
+`[ type: random, format: mobile-number ]` => This template returns randomly generated mobile
 number. other formats could be last-name, full-name, mobile-number, address-line-1 etc. 
 
+## How to help
 
+If you come across an issue while using this plugin, do help to file a bug [here](https://github.com/5v1988/bdd-transform-values/issues)
 
 
 
