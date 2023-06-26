@@ -21,7 +21,7 @@ files.
 
 ## Installation
 
-Add this block to pom.xml
+Add this block to `pom.xml`
 
     <plugins>
       ...
@@ -51,7 +51,7 @@ Optionally, the file with a different name can also be passed as follows:
         ...
     </plugin>
 
-After adding this on `pom.xml`, along surefire-plugin, `mvn test` either substitutes values from 
+After adding this plugin dependency on `pom.xml`, along with surefire-plugin, `mvn test` either substitutes values from 
 yaml file by matching the path or auto-generate like in case of date values. Please also note that
 it doesn't modify the original feature files, but the ones in build directory: `target`
 
