@@ -90,7 +90,7 @@ Feature: Login feature
 
 ## Explanation
 
-`[ type: token, path: account.email ]` => In this template, Jsonpath `account.name` gets 
+`[ type: token, path: account.name ]` => In this template, Jsonpath `account.name` gets 
 value `Tommy` from the yaml file
 
 `[ type: date, format: MM/dd/yyyy, delta: -1 ]` => Yesterday's date in `MM/dd/yyyy` format
